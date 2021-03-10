@@ -1,5 +1,5 @@
 #################TRANSFER LEARNING################
-setwd("C:/Users/Elizaveta/Desktop/descriptors/16_03/Revision/data")
+setwd("C:/MY_WORKING_directory")
 
 set.seed(1234)
 library(keras)
