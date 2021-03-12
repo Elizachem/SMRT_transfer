@@ -1,0 +1,88 @@
+
+---
+title: "Train 1D CNN on METLIN SMRT data set"
+output:
+  pdf_document: default
+  word_document: default
+--- 
+
+```{r setup}
+knitr::opts_chunk$set(echo = T)
+```
+The data used in this study is taken from <https://github.com/Elizachem/SMRT_transfer>
+
+
+```{r data, cache=T, warnings = F, message=FALSE}
+setwd("C:/markdown")
+library(caret)
+library(Metrics)
+library(data.table)
+library(abind)
+library(keras)
+library(ggplot2)
+### Load data
+matrix<- readRDS("matrix_abind.rda")
+ dim(matrix)
+retention_time <- as.data.frame(fread("SMRT_data.csv")$rt) 
+retention_time <- apply(retention_time,2,function(x)as.numeric(as.character(x)))
+retention_time<- as.data.frame(retention_time)
+names(retention_time)[1]<- "rt"
+Rt <- as.matrix(retention_time)
+ggplot(dpi = 500, height = 90, width = 90)+ 
+geom_histogram( data =retention_time, aes(x=rt),fill="#009999",  binwidth = 0.8,colour= "white", alpha = 0.7,  show.legend = F)
+
+trainIndex<-sample(createDataPartition(retention_time$rt, p=0.8, list=FALSE))
+ytrain = as.matrix(retention_time[trainIndex,])
+ytest <- as.matrix(retention_time[-trainIndex,])
+xtrain <- matrix[trainIndex,,]
+xtest<- matrix[-trainIndex,,]
+ 
+in_dim = c(dim(xtrain)[2:3])
+print(in_dim)
+### Build model
+model = keras_model_sequential() %>%
+      layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%
+    layer_conv_1d(filters = 200, kernel_size = 9,strides = 1, activation = "relu") %>% 
+  layer_global_average_pooling_1d()%>%
+  layer_dense(units = 200, activation = "relu")%>%
+  layer_dense(units = 1, activation = "linear")
+
+model %>% compile(
+  loss = "mae",
+  optimizer <- "adam")
+###TRAIN model
+#Stop training when validation loss stops decreasing
+early_stop <- callback_early_stopping(monitor = "val_loss", patience =7,mode = "min",min_delta= 0.01,restore_best_weights = T)
+
+history1 <- model%>% fit(
+  xtrain,
+  ytrain,
+  batch_size =32,
+  epochs = 1,
+  validation_split = 0.05,
+  callbacks = list(early_stop))
+
+history2<- model %>% fit(xtrain, ytrain, epochs = 1, batch_size=128, validation_split=0.05, callbacks = list(early_stop))
+
+plot(history1, smooth.spline)
+###Calculate Errors
+mdape <- function(x,z) median(abs(x-z)/x)
+test_y_pred = model %>% predict(xtest)
+RMSE<- RMSE(ytest, test_y_pred)
+MAE <- MAE(ytest, test_y_pred)
+MdAE<- mdae(ytest, test_y_pred)
+MedRE<- mdape(ytest, test_y_pred)
+MRE <- mape(ytest, test_y_pred)
+test_metrics <- as.data.frame(cbind(RMSE,MAE,MdAE,MRE,MedRE))
+
+print(test_metrics)
+
+plot(ytest,test_y_pred)
+
+
+```
+
+
+
+
+
