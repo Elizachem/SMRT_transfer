@@ -190,7 +190,7 @@ in_dim<- dim(matrix)[-1]
 in_dim
 build_model_scratch <- function(){
   model = keras_model_sequential() %>%
-    layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%#, padding = "valid"
+    layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%
     layer_conv_1d(filters = 200, kernel_size = 9,strides = 1, activation = "relu") %>% 
     layer_global_average_pooling_1d()%>%
     layer_dense(units = 200, activation = "relu")%>%
