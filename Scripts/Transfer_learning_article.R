@@ -1,5 +1,4 @@
 #################TRANSFER LEARNING################
-setwd("C:/Users/Elizaveta/Desktop/descriptors/16_03/Revision/data")
 
 set.seed(1234)
 library(keras)
