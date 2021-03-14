@@ -6,5 +6,5 @@
 * To train 1D CNN on METLIN SMRT data set load zip file "Train initial model for SMRT"
 * To train 1D CNN from scratch on MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip data sets load zip files "List of matrices transfer data sets" and "SMILES and RTs"
 * For transfer learning with MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip data sets load zip files "List of matrices transfer data sets", "SMILES and RTs", "models for transfer learning" 
-* DATA also contains SDF files for MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip data sets "SDF_DATA_SETS.zip". These files can be used to build your own model and compare with 1D CNN
+* DATA also contains SDF files for MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip data sets "SDF_DATA_SETS.zip". These files can be used to build your own model and to compare results with 1D CNN
 
