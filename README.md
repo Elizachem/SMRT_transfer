@@ -1,4 +1,4 @@
-## Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
+# Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
 <img src="graphical abstract.png" align="center" height="354" width="680"/>
 
 # Brief Description
