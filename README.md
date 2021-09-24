@@ -1,5 +1,5 @@
 ## Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
-<img src="graphical abstract.png" align="center" height="304" width="280"/>
+<img src="graphical abstract.png" align="center" height="304" width="680"/>
 ### Repository contains pre-trained models, data on retention times, one-hot matrices for five data sets (METLIN SMRT, MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip)
 ### Scripts can be used to train 1D CNN model from scratch or for transfer learning approach
 ### To reproduce results of predicition retention times for METLIN SMRT data set with 1D CNN check Report 
