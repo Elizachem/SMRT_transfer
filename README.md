@@ -1,4 +1,4 @@
-# :computer: Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography :crystal_ball:
+# Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography :computer::world_map:
 <img src="graphical abstract.png" align="center" height="354" width="680"/>
 
 # Brief Description :information_source:
