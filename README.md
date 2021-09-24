@@ -1,10 +1,10 @@
 ## Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
-<img src="graphical abstract.png" align="center" height="404" width="680"/>
+<img src="graphical abstract.png" align="center" height="354" width="680"/>
 
 # Brief Description
-Repository contains pre-trained models, data on retention times, one-hot matrices for five data sets (METLIN SMRT, MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip)
-Scripts can be used to train 1D CNN model from scratch or for transfer learning approach
-To reproduce results of predicition retention times for METLIN SMRT data set with 1D CNN check [Report](https://github.com/Elizachem/SMRT_transfer/tree/main/Report) 
+Repository contains pre-trained models, data on retention times, one-hot matrices for five data sets (METLIN SMRT, MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip).
+Scripts can be used to train 1D CNN model from scratch or for transfer learning approach.
+To reproduce results of predicition retention times for METLIN SMRT data set with 1D CNN check [Report](https://github.com/Elizachem/SMRT_transfer/tree/main/Report).
 
 * To train 1D CNN on METLIN SMRT data set load zip file ["Train initial model for SMRT"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/Train%20initial%20model%20for%20SMRT.zip)
 * To train 1D CNN from scratch on MassBank1, MetaboBASE, Hilic_Retip and Riken_Retip data sets load zip files ["List of matrices transfer data sets"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/List%20of%20matrices%20transfer%20data%20sets.zip) and ["SMILES and RTs"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/SMILES%20and%20RTs.zip)
