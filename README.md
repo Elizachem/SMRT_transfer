@@ -15,9 +15,4 @@ Scripts can be used to train 1D CNN model from scratch or for transfer learning 
 The only requirements are to be familiar with the basic syntax of the *R* language, PC with *Internet* connection and *Windows* OS (desirable), [*RStudio*](https://www.rstudio.com/products/rstudio/download/) and [*R*](https://cloud.r-project.org/) (≥ 4.0.0).
 
 ## Contact :mailbox:
-Please send any comments or questions you may have to the author (*Ms. Elizaveta Fedorova* :woman_scientist:), :envelope: elizaveta.chemi@gmail.com, <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"> [0000-0002-5774-7901](https://orcid.org/0000-0002-5774-7901) 
-
-
-
-
-:envelope:, ORCID: 0000-0002-5774-7901 :label:.
+Please send any comments or questions you may have to the author (*Ms. Elizaveta Fedorova* :woman_scientist:), :envelope: elizaveta.chemi@gmail.com, <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"> [0000-0002-5774-7901](https://orcid.org/0000-0002-5774-7901).
