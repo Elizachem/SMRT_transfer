@@ -67,7 +67,7 @@ rm(list_matrices)
 in_dim = c(dim(xtrain)[2:3])
 print(in_dim)
 model = keras_model_sequential() %>%
-  layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%#, padding = "valid"
+  layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%
   layer_conv_1d(filters = 200, kernel_size = 9,strides = 1, activation = "relu") %>% 
   layer_global_average_pooling_1d()%>%
   layer_dense(units = 200, activation = "relu")%>%
@@ -87,7 +87,7 @@ model %>% fit(xtrain,
               ytrain, 
               epochs = num_epochs,
               batch_size=size,
-              validation_split=0.05,
+              validation_split=0.1,
               callbacks = list(early_stop))
 ##### TEST
 test_y_pred = model %>% predict(xtest)
