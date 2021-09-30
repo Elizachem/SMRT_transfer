@@ -6,7 +6,6 @@ library(rcdk)
 ## MASS BANK EXAMPLE
 massbank <- load.molecules("MassBank1.sdf")
 retention_time <- as.data.frame(fread("smiles_retention_MassBank1.csv")$retention_time) 
-retention_time <- apply(retention_time,2,function(x)as.numeric(as.character(x)))
 retention_time<- as.data.frame(retention_time)
 names(retention_time)[1]<- "rt"
 ### FOR CSV DATA If SMILES ARE NOT IN THE REQUIRED FORM
