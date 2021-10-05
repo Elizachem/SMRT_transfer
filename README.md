@@ -1,8 +1,6 @@
-<!— badges: starts —>
-
+<!-- badges: starts -->
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-
-<!— badges: end —>
+<!-- badges: end -->
 
 # Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
 <img src="graphical abstract.png" align="center" height="354" width="680"/>
