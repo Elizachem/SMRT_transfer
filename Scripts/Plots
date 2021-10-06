@@ -1,0 +1,196 @@
+library(data.table)
+library(ggplot2)
+#### LOAD CSV FILES containing 10-fold cross-validation results
+lifeold <- fread("results_lifeold.csv")
+delta_lifeold <- as.data.frame(lifeold$predicted- lifeold$actual)
+names(delta_lifeold)[1]<- "delta"
+
+massbank1 <- fread("results_massbank.csv")
+delta_massbank1 <- as.data.frame(massbank1$predicted-massbank1$actual)
+names(delta_massbank1)[1]<- "delta"
+
+metabo <- fread("results_metabobase.csv")
+delta_metabo <- as.data.frame(metabo$actual -metabo$predicted)
+names(delta_metabo)[1]<- "delta"
+
+riken <- fread("results_riken.csv")
+delta_riken <- as.data.frame(riken$actual - riken$predicted)
+names(delta_riken)[1]<- "delta"
+
+hilic <- fread("results_hilic.csv")
+delta_hilic <- as.data.frame(hilic$actual - hilic$predicted_hilic)
+names(delta_hilic)[1]<- "delta" 
+
+SMRT <- fread("results_SMRT.csv")
+delta_smrt<- as.data.frame(SMRT$actual - SMRT$predicted)
+names(delta_smrt)[1]<- "delta"
+########################### PLOT DISTRIBUTION ERROR HOSTOGRAMS####################
+hist_smrt<- ggplot(delta_smrt, aes(x=delta)) + geom_histogram(binwidth=0.5,
+                                                                         color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for METLIN SMRT",
+                                                                                                                                  x="\u0394RT", y = "Count" )
+hist_smrt
+
+hist_massbank1 <- ggplot(delta_massbank1, aes(x=delta)) + geom_histogram(binwidth=0.1,
+                                                                 color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for MassBank1",
+                                                                                                                          x="\u0394RT", y = "Count" )
+hist_massbank1
+hist_metabobase <- ggplot(delta_metabo, aes(x=delta)) + geom_histogram(binwidth=0.6,
+                                                                     color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for MetaboBASE",
+                                                                                                                              x="\u0394RT", y = "Count" )
+hist_metabobase
+hist_LIFE_old <- ggplot(delta_lifeold, aes(x=delta)) + geom_histogram(binwidth=0.1,
+                                                                     color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for LIFE_old",
+                                                                                                                              x="\u0394RT", y = "Count" )
+hist_LIFE_old
+hist_hilic<- ggplot(delta_hilic, aes(x=delta)) + geom_histogram(binwidth=0.4,
+                                                                color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for HILIC_Retip",
+                                                                                                                         x="\u0394RT", y = "Count" )#+geom_density( fill="#FF6666") 
+
+hist_hilic
+hist_riken <- ggplot(delta_riken, aes(x=delta)) + geom_histogram(binwidth=0.3,
+                                                                 color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for RIKEN_Retip",
+                                                                                                                          x="\u0394RT", y = "Count" )
+hist_riken
+library(cowplot)
+hist.plot <- plot_grid(hist_smrt,
+                       hist_hilic,
+                          hist_riken,
+                          hist_LIFE_old,
+                          hist_massbank1,
+                          hist_metabobase, 
+                          labels = c("A", "B", "C", "D", "F", "G"),
+                          ncol = 2,
+                          nrow = 3)
+hist.plot
+
+ggsave(
+  filename = "hist_errors.tiff",
+  plot = hist.plot,
+  device = "tiff",
+  path = NULL,
+  scale = 1.5,
+  width = 150,
+  height = 120,
+  units = "mm",
+  dpi = 500,
+  limitsize = TRUE,
+  bg = NULL
+)
+
+
+############################### Predicted vs actual and Confidence bands ########################
+riken_reg <- ggplot(riken, aes(x = actual, y = predicted))+ geom_point(alpha = 0.5, size = 0.5)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.5,se=T, level = 0.95, fullrange=T)+ theme_minimal()+
+  labs(title="RIKEN_Retip",x="Recorded", y = "Predicted" )
+riken_reg
+hilic_reg <- ggplot(hilic, aes(x = actual, y = predicted))+geom_point(alpha = 0.5, size = 0.5)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.5,se=T, level = 0.95, fullrange=T)+ theme_minimal()+
+  labs(title="HILIC_Retip",x="Recorded", y = "Predicted" )
+hilic_reg
+life_old_reg <- ggplot(lifeold, aes(x = actual, y = predicted))+ geom_point(alpha = 0.5, size = 0.5)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.5,se=T, level = 0.95, fullrange=T)+ theme_minimal()+
+  labs(title="LIFE_old",x="Recorded", y = "Predicted" )
+life_old_reg
+metabo_reg <- ggplot(metabo, aes(x = actual, y = predicted))+ geom_point(alpha = 0.5, size = 0.5)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.5,se=T, level = 0.95, fullrange=T)+ theme_minimal()+
+  labs(title="MetaboBASE",x="Recorded", y = "Predicted" )
+metabo_reg
+massbank_reg <- ggplot(massbank1, aes(x = actual, y = predicted))+ geom_point(alpha = 0.5, size = 0.5)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.5,se=T, level = 0.95, fullrange=T)+ theme_minimal()+
+  labs(title="MassBank1",x="Recorded", y = "Predicted" )
+massbank_reg
+smrt_reg<- ggplot(SMRT, aes(x = actual, y = predicted))+ geom_point(alpha = 0.3, size = 0.3)+
+  geom_smooth(method=lm , color="darkcyan", fill = "cadetblue",size = 0.3,se=T, level = 0.95)+ theme_minimal()+
+  labs(title="METLIN SMRT ",x="Recorded", y = "Predicted" )
+smrt_reg
+
+regression.plot <- plot_grid(smrt_reg,
+                       hilic_reg,
+                       riken_reg,
+                       life_old_reg,
+                       massbank_reg,
+                       metabo_reg, 
+                       labels = c("A", "B", "C", "D", "F", "G"),
+                       ncol = 2,
+                       nrow = 3)
+regression.plot
+ggsave(
+  filename = "regression.plot.tiff",
+  plot = regression.plot,
+  device = "tiff",
+  path = NULL,
+  scale = 1.2,
+  width = 150,
+  height = 120,
+  units = "mm",
+  dpi = 500,
+  limitsize = TRUE,
+  bg = NULL
+)
+############ RETENTION TIME DISTRIBUTION PLOT
+ret_SMRT<- as.data.frame(SMRT$actual)
+names(ret_SMRT)[1]<- "RT"
+hist_smrt_ret<- ggplot(ret_SMRT, aes(x=RT)) + geom_histogram(binwidth=0.5,
+                                                              color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for METLIN SMRT",
+                                                                                                                       x="RT", y = "Count" )
+hist_smrt_ret
+ret_massbank<- as.data.frame(massbank1$actual)
+names(ret_massbank)[1]<- "RT"
+hist_massbank1_ret <- ggplot(ret_massbank, aes(x=RT)) + geom_histogram(binwidth=0.2,
+                                                                         color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for MassBank1",
+                                                                                                                                  x="RT", y = "Count" )
+hist_massbank1_ret
+
+ret_metabo<- as.data.frame(metabo$actual)
+names(ret_metabo)[1]<- "RT"
+
+hist_metabobase_ret <- ggplot(ret_metabo, aes(x=RT)) + geom_histogram(binwidth=0.8,
+                                                                       color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for MetaboBASE",
+                                                                                                                                x="\u0394RT", y = "Count" )
+hist_metabobase_ret
+
+ret_lifeold<- as.data.frame(lifeold$actual)
+names(ret_lifeold)[1]<- "RT"
+hist_LIFE_old_ret <- ggplot(ret_lifeold, aes(x=RT)) + geom_histogram(binwidth=0.1,
+                                                                      color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for LIFE_old",
+                                                                                                                               x="RT", y = "Count" )
+hist_LIFE_old_ret
+
+ret_hilic<- as.data.frame(hilic$actual)
+names(ret_hilic)[1]<- "RT"
+hist_hilic_ret<- ggplot(ret_hilic, aes(x=RT)) + geom_histogram(binwidth=0.3,
+                                                                color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for HILIC_Retip",
+                                                                                                                         x="RT", y = "Count" )#+geom_density( fill="#FF6666") 
+
+hist_hilic_ret
+
+ret_riken<- as.data.frame(riken$actual)
+names(ret_riken)[1]<- "RT"
+hist_riken_ret <- ggplot(ret_riken, aes(x=RT)) + geom_histogram(binwidth=0.3,
+                                                                 color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for RIKEN_Retip",
+                                                                                                                          x="RT", y = "Count" )
+hist_riken_ret
+
+hist.retent.plot <- plot_grid(hist_smrt_ret,
+                             hist_hilic_ret,
+                             hist_riken_ret,
+                             hist_LIFE_old_ret,
+                             hist_massbank1_ret,
+                             hist_metabobase_ret, 
+                             labels = c("A", "B", "C", "D", "F", "G"),
+                             ncol = 2,
+                             nrow = 3)
+hist.retent.plot
+ggsave(
+  filename = "hist.retent.plot.tiff",
+  plot = hist.retent.plot,
+  device = "tiff",
+  path = NULL,
+  scale = 1.2,
+  width = 150,
+  height = 120,
+  units = "mm",
+  dpi = 500,
+  limitsize = TRUE,
+  bg = NULL
+)
