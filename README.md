@@ -1,5 +1,7 @@
 <!-- badges: starts -->
+[![](https://img.shields.io/badge/R-%23276DC3.svg?style=flat-square&logo=r&logoColor=white?)](https://cran.r-project.org/index.html)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![License](https://img.shields.io/badge/license-MIT-ff69b4.svg?style=flat-square&maxAge=2678400)](https://choosealicense.com/licenses/mit/)
 <!-- badges: end -->
 
 # Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
