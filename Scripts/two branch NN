@@ -1,0 +1,49 @@
+in_dim <- dim(xtrain)[-1]
+
+input1<- layer_input(shape = in_dim) 
+input2<- layer_input(shape = in_dim) 
+
+Q1<-input1%>%
+    layer_dense(units =256,activation = "relu")%>%
+    layer_dense(units =256,activation = 'relu')%>%
+    layer_dense(units =256,activation = 'relu')
+
+Q2 <-input2 %>%
+  layer_dense(units =256,activation = "relu")%>%
+  layer_dense(units =256,activation = 'relu')%>%
+  layer_dense(units =256,activation = 'relu')
+
+ pred<- layer_concatenate(list(Q1, Q2))%>%
+layer_dense(units =1,activation = 'linear')
+ 
+ model_twoBranch <- keras_model(inputs = list(input1, input2), outputs = pred)
+  
+  model_twoBranch %>% compile(
+    loss = "mae",
+    optimizer_adam(lr=0.0001) 
+    
+summary(model_twoBranch)
+early_stop <- callback_early_stopping(monitor = "loss",
+                                      patience =7,
+                                      mode = "min",
+                                      min_delta= 0.01,
+                                      restore_best_weights =F)
+    
+    
+##############
+model_twoBranch %>% fit(
+  x = list(xtrain,xtrain), y = ytrain,
+  validation_split = 0.1,
+  batch_size = 32,
+  epochs = 35,
+  callbacks = list(early_stop))
+  
+test_y_pred <- model_twoBranch%>% predict(list(xtest,xtest))
+plot(test_y_pred, ytest)
+
+mdape <- function(x,z) median(abs(x-z)/x)
+RMSE(ytest, test_y_pred)
+MAE(ytest, test_y_pred)
+mdae(ytest, test_y_pred)
+mdape(ytest, test_y_pred)
+mape(ytest, test_y_pred)
