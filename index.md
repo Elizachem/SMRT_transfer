@@ -1,37 +1,24 @@
-## Welcome to GitHub Pages
+<!-- badges: starts -->
+[![](https://img.shields.io/badge/R-%23276DC3.svg?style=flat-square&logo=r&logoColor=white?)](https://cran.r-project.org/index.html)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![License](https://img.shields.io/badge/license-MIT-ff69b4.svg?style=flat-square&maxAge=2678400)](https://choosealicense.com/licenses/mit/)
+<!-- badges: end -->
 
-You can use the [editor on GitHub](https://github.com/Elizachem/SMRT_transfer/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+# Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
+<img src="https://github.com/Elizachem/SMRT_transfer/blob/main/graphical%20abstract.png" align="center" height="354" width="680"/>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Brief Description :information_source:
+Repository contains pre-trained models, data on retention times, one-hot matrices for five data sets (*METLIN SMRT*, *MassBank1*, *MetaboBASE*, *Hilic_Retip* and *Riken_Retip*).
+Scripts can be used to train 1D CNN model from scratch or for transfer learning approach.
+**To reproduce results of predicition retention times for *METLIN SMRT* data set with 1D CNN check [Report](https://github.com/Elizachem/SMRT_transfer/tree/main/Report).**
 
-### Markdown
+* To train 1D CNN on *METLIN SMRT* data set load zip file ["Train initial model for SMRT"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/Train%20initial%20model%20for%20SMRT.zip)
+* To train 1D CNN from scratch on *MassBank1*, *MetaboBASE*, *Hilic_Retip* and *Riken_Retip* data sets load zip files ["List of matrices transfer data sets"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/List%20of%20matrices%20transfer%20data%20sets.zip) and ["SMILES and RTs"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/SMILES%20and%20RTs.zip)
+* For transfer learning with *MassBank1*, *MetaboBASE*, *Hilic_Retip* and *Riken_Retip* data sets load zip files ["List of matrices transfer data sets"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/List%20of%20matrices%20transfer%20data%20sets.zip), ["SMILES and RTs"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/SMILES%20and%20RTs.zip), ["models for transfer learning"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/models%20for%20transfer%20learning.zip) 
+* [DATA](https://github.com/Elizachem/SMRT_transfer/tree/main/DATA) also contains SDF files for *MassBank1*, *MetaboBASE*, *Hilic_Retip* and *Riken_Retip* data sets ["SDF_DATA_SETS.zip"](https://github.com/Elizachem/SMRT_transfer/blob/main/DATA/SDF_DATA_SETS.zip). These files can be used to build your own model and to compare results with 1D CNN
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Requirements :pick:
+The only requirements are to be familiar with the basic syntax of the *R* language, PC with *Internet* connection and *Windows* OS (desirable), [*RStudio*](https://www.rstudio.com/products/rstudio/download/) and [*R*](https://cloud.r-project.org/) (≥ 4.0.0).
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Elizachem/SMRT_transfer/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Contact :mailbox:
+Please send any comments or questions you may have to the author (*Ms. Elizaveta Fedorova* :woman_scientist:): :envelope: elizaveta.chemi@gmail.com, <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"> [0000-0002-5774-7901](https://orcid.org/0000-0002-5774-7901).
