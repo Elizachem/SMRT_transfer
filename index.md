@@ -5,7 +5,7 @@
 <!-- badges: end -->
 
 # Deep convolutional neural network for retention time prediction in Reversed-Phase Liquid Chromatography
-<img src="https://github.com/Elizachem/SMRT_transfer/blob/main/graphical%20abstract.png" align="center" height="354" width="680"/>
+<img src="graphical abstract.png" align="center" height="354" width="680"/>
 
 ## Brief Description :information_source:
 Repository contains pre-trained models, data on retention times, one-hot matrices for five data sets (*METLIN SMRT*, *MassBank1*, *MetaboBASE*, *Hilic_Retip* and *Riken_Retip*).
