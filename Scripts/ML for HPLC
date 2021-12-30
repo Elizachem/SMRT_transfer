@@ -1,0 +1,89 @@
+############## H2O GBM#################
+
+library(h2o)
+
+h2o.init(ip = "localhost", port = 54321, nthreads= -1,max_mem_size = "4g")
+
+d_hf <- as.h2o(dataTrain)
+d_hf2 <- as.h2o(dataTest)
+d_hf3 <- as.h2o(dataValidation)
+
+gbm2 <- h2o.gbm(
+  training_frame = d_hf,   
+  validation_frame =d_hf3,
+  tweedie_power = 1.8,
+  x=2:ncol(d_hf),                  
+  y=1,
+  ntrees = 200, 
+  nfolds = 5,
+  min_rows =80,
+  keep_cross_validation_fold_assignment = T,
+  keep_cross_validation_predictions = T,
+  max_depth = 80,             
+  keep_cross_validation_models = TRUE,
+  seed = 1234,
+  stopping_metric = "MAE")
+  
+h2o.performance(gbm2, newdata = d_hf2)
+library(ModelMetrics)
+predictions <- h2o.predict(gbm2, d_hf2)
+predictions
+
+d_pr <- c(as.data.frame(predictions))
+mad <- mad(dataTest[,1]-d_pr$predict)
+mad
+h2o.r2(gbm2)
+
+
+##########
+library(data.table)
+test <- fread("test_desc_final.csv")
+retention_time<- as.data.frame(test[,1])
+test_sc<- scale(test[,-1])
+test <- as.data.frame(cbind(retention_time, test_sc))
+names(test)[1]<-"rt"
+library(caret)
+trainIndex <- sample(createDataPartition(test$rt
+                                         , p=0.8, list=FALSE))
+dataTrain <- test[trainIndex,]
+dataTest <- test[-trainIndex,]
+
+library(xgboost)
+train_x = data.matrix(dataTrain[,-1])
+train_y = dataTrain[,1]
+test_x = data.matrix(dataTest[, -1])
+test_y = dataTest[, 1]
+
+xgb_train = xgb.DMatrix(data = train_x, label = train_y)
+xgb_test = xgb.DMatrix(data = test_x, label = test_y)
+
+set.seed(1234)
+rounds = 40
+depth = 20
+xgbc = xgboost(data = xgb_train,
+               max.depth = depth, nrounds = rounds,
+               lambda = 0.1)
+print(xgbc)
+pred_y = predict(xgbc, xgb_test)
+
+mae = caret::MAE(test_y, pred_y)
+rmse = caret::RMSE(test_y, pred_y)
+medae = Metrics::mdae(test_y, pred_y)
+cat( "MAE:", mae*60,"sec ", " RMSE:", rmse*60,"sec ", " MedAE", medae*60, "sec")
+
+#MAE: 54.17462 sec   RMSE: 81.47926 sec   MedAE 34.98699 sec
+
+params = list(loss_function = 'MAE',
+              iterations = 1000, metric_period=10,
+              thread_count=4,
+              depth = 12,
+              learning_rate = 0.03)
+model<- catboost.train(train_pool,
+               test_pool = NULL,
+               params = params)
+prediction <- catboost.predict(model, real_pool)
+mae<-MAE(prediction, dataTest[,1])
+rmse<-RMSE(prediction, dataTest[,1])
+medae<-Metrics::mdae(dataTest[,1], prediction)
+cat( "MAE:", mae*60,"sec ", " RMSE:", rmse*60,"sec ", " MedAE", medae*60, "sec")
+
