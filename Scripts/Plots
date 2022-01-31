@@ -145,8 +145,8 @@ ret_metabo<- as.data.frame(metabo$actual)
 names(ret_metabo)[1]<- "RT"
 
 hist_metabobase_ret <- ggplot(ret_metabo, aes(x=RT)) + geom_histogram(binwidth=0.8,
-                                                                       color = "blue", fill="lightblue")+  theme_minimal()+labs(title="Error distribution for MetaboBASE",
-                                                                                                                                x="\u0394RT", y = "Count" )
+                                                                       color = "blue", fill="lightblue")+  theme_minimal()+labs(title="RT distribution for MetaboBASE",
+                                                                                                                                x="RT", y = "Count" )
 hist_metabobase_ret
 
 ret_lifeold<- as.data.frame(lifeold$actual)
