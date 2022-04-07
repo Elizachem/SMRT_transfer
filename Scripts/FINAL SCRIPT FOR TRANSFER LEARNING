@@ -12,7 +12,7 @@ library(rcdk)
 
 ### Load your data set with implicit hydrogens
 ## Here we take HILIC RETIP as an example
-mols = load.molecules('hilic_Retip3D.sdf')
+mols = load.molecules('hilic_Retip3D.sdf') # replace with your own SDF file
 
 #### Generate SMILES for your data set
 smiles = lapply(1:length(mols),function(i) get.smiles(mols[[i]],flavor = smiles.flavors(c("Canonical", "UseAromaticSymbols"))))
@@ -139,7 +139,7 @@ mdape <- function(x,z) median(abs(x-z)/x)
 test_y_pred = model %>% predict(xtest)
 
 plot(ytest,test_y_pred)
-model %>% save_model_hdf5("model_transfer.h5") ### SAVE FINAL MODEL
+model %>% save_model_hdf5("model_transfer.h5") ### SAVE FINAL MODEL!!
 
 ### TRANSFER LEARNING FOR SMALL DATA SET
 
@@ -147,7 +147,7 @@ rm(list = ls(all.names = TRUE))
 gc()
 #### LOAD RETENTION TIMES FOR YOUR DATA SET
 ### RETENTION TIMES FOR HILIC DATA SET CAN BE LOADED FROM REPOSITORY
-retention_time <- as.data.frame(fread("smiles_retention_hilic_retip.csv")$`Experimental Retention Time`)
+retention_time <- as.data.frame(fread("smiles_retention_hilic_retip.csv")$`Experimental Retention Time`) #Replace it with your retention times
 ### LOAD LIST FOR YOUR DATA SET
 load("list_matrices_SMALL_DATA.RData")
 
