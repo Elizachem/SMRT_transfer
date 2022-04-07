@@ -1,0 +1,254 @@
+options(java.parameters = c("-XX:+UseConcMarkSweepGC", "-Xmx1200m"))
+memory.size(max = T)
+memory.limit(size=56000)
+
+#LOAD LIBRARIES
+library(keras)
+library(text2vec)
+library(data.table)
+library(stringi)
+library(caret)
+library(rcdk)
+
+### Load your data set with implicit hydrogens
+## Here we take HILIC RETIP as an example
+mols = load.molecules('hilic_Retip3D.sdf')
+
+#### Generate SMILES for your data set
+smiles = lapply(1:length(mols),function(i) get.smiles(mols[[i]],flavor = smiles.flavors(c("Canonical", "UseAromaticSymbols"))))
+
+smiles_character<- unlist(smiles)
+smiles_split <- strsplit(smiles_character, "")
+smiles_elements <- as.vector(unlist(smiles_split))
+###### CREATE VOCABULARY
+vocab = create_vocabulary(smiles_elements)
+vocab <- vocab$term
+vocab
+
+### LOAD METLIN SMRT VOCABULARY 
+### TXT file can be loaded from github
+
+vocab_metlin = unlist(fread('vocab_metlin.txt'))
+
+### CREATE FINAL VOCABULARY APPROPRIATE FOR BOTH DATA SETS
+
+vocab = unique(c(vocab_metlin,vocab))
+
+#### Define the longest SMILES
+
+x <- which.max(lapply(smiles_split, function(x) length(x)))
+x
+length_smiles <- length(smiles_split[[x]])
+
+### CHOOSE THE LENGTH
+if (length_smiles>93){
+  length = length_smiles
+} else{
+  length = 93
+}
+####Creating matrix in which rows are vocabulary and number of columns are the longest SMILES
+matrixsmi <- matrix(0, nrow = as.numeric(length(vocab)), ncol = length)
+### Finding elements using vocabulary which present in the molecule
+### Should be a list containing number of elements equal to number of molecules
+list_of_elements <-  lapply(1:length(smiles_character), function(x) sapply(1:length(vocab), function(y) stri_locate_all_coll(smiles_character[x], vocab[y], max_count=-1)[[1]][,1]))
+###Creating list of matrices
+list_matrices <- lapply(1:length(smiles_character), function(x) sapply(1:length(vocab), function(t) 
+  replace(matrixsmi[t,], list_of_elements[[x]][[t]], 1)))
+### SAVE CRREATED LIST
+save(list_matrices, file = 'list_matrices_SMALL_DATA.RData')
+
+####Creating LIST OF MATRICES FOR SMRT DATA SET
+#### LOAD CSV FILE CONTAINING SMILES
+#### THIS FILE CAN BE LOADED FROM GITHUB REPOSITORY
+smiles = unlist(fread('smiles_SMRT.csv'))
+
+smiles_character<- unlist(smiles)
+smiles_split <- strsplit(smiles_character, "")
+smiles_elements <- as.vector(unlist(smiles_split))
+
+
+matrixsmi <- matrix(0, nrow = as.numeric(length(vocab)), ncol = length)
+### Finding elements using vocabulary which present in the molecule
+### Should be a list containing number of elements equal to number of molecules
+list_of_elements <-  lapply(1:length(smiles_character), function(x) sapply(1:length(vocab), function(y) stri_locate_all_coll(smiles_character[x], vocab[y], max_count=-1)[[1]][,1]))
+###Creating list of matrices
+list_matrices <- lapply(1:length(smiles_character), function(x) sapply(1:length(vocab), function(t) 
+  replace(matrixsmi[t,], list_of_elements[[x]][[t]], 1)))
+#### SAVE list for METLIN SMRT DATA SET
+save(list_matrices, file = 'list_matrices_SMRT_DATA_35.RData')
+
+rm(list = ls(all.names = TRUE))
+gc()
+
+## TRAIN INITIAL MODEL
+
+library(abind)
+library(Metrics)
+## LOAD METLIN SMRT LIST 
+load('list_matrices_SMRT_DATA_35.RData')
+
+matrix<- abind(list_matrices, along = 0.5)
+
+##LOAD CSV FILE WITH RETENTION TIMES
+## THIS FILE CAN BE LOADED FROM THE REPOSITORY
+
+retention_time <- as.data.frame(fread("SMRT_data.csv")$rt) 
+names(retention_time)[1]<- "rt"
+
+trainIndex<-sample(createDataPartition(retention_time$rt, p=0.8, list=FALSE))
+ytrain = as.matrix(retention_time[trainIndex,])
+ytest <- as.matrix(retention_time[-trainIndex,])
+xtrain <- matrix[trainIndex,,]
+xtest<- matrix[-trainIndex,,]
+
+in_dim = c(dim(xtrain)[2:3])
+print(in_dim)
+### Build model
+model = keras_model_sequential() %>%
+  layer_conv_1d(filters = 200, kernel_size = 11,strides =1, input_shape = in_dim, activation = "relu")%>%
+  layer_conv_1d(filters = 200, kernel_size = 9,strides = 1, activation = "relu") %>% 
+  layer_global_average_pooling_1d()%>%
+  layer_dense(units = 200, activation = "relu")%>%
+  layer_dense(units = 1, activation = "linear")
+
+model %>% compile(
+  loss = "mae",
+  optimizer <- "adam")
+###TRAIN model
+early_stop <- callback_early_stopping(monitor = "val_loss",
+                                      patience =5,
+                                      mode = "min",
+                                      min_delta= 0.0001)
+
+model%>% fit(
+  xtrain,
+  ytrain,
+  batch_size =32,
+  epochs = 10,
+  callbacks = list(early_stop),
+  validation_split = 0.1)
+model %>% fit(xtrain, 
+              ytrain,
+              epochs = 10, 
+              batch_size=128, 
+              callbacks = list(early_stop),
+              validation_split=0.1)
+
+###Calculate Errors
+mdape <- function(x,z) median(abs(x-z)/x)
+test_y_pred = model %>% predict(xtest)
+
+plot(ytest,test_y_pred)
+model %>% save_model_hdf5("model_transfer.h5") ### SAVE FINAL MODEL
+
+### TRANSFER LEARNING FOR SMALL DATA SET
+
+rm(list = ls(all.names = TRUE))
+gc()
+#### LOAD RETENTION TIMES FOR YOUR DATA SET
+### RETENTION TIMES FOR HILIC DATA SET CAN BE LOADED FROM REPOSITORY
+retention_time <- as.data.frame(fread("smiles_retention_hilic_retip.csv")$`Experimental Retention Time`)
+### LOAD LIST FOR YOUR DATA SET
+load("list_matrices_SMALL_DATA.RData")
+
+#### PRE-PROCESSING
+
+retention_time <- as.data.frame(retention_time)
+names(retention_time)[1]<- "rt"
+##CREATE AN ARRAY 
+matrix<- abind(list_matrices, along=0.5)
+
+########CREATE FOLDS FOR CROSS-VALIDATION
+
+kfold <- createFolds(retention_time$rt, k = 10, list = T, returnTrain = FALSE)
+kfold
+
+MedAE_all <-NULL
+MAE_all <- NULL
+RMSE_all<- NULL
+MRE_all<- NULL
+MedRE_all<- NULL
+predicted = NULL
+##### Median Relative Error
+mdape <- function(x,z) median(abs(x-z)/x)
+## TRANSFER MODEL
+## REMOVING THE LAST LAYER
+## ADDING NEW DENSE LAYER and FREEZING THE FIRST CONVOLUTIONAL LAYER
+
+build_model <- function(){
+  model <- load_model_hdf5("model_transfer.h5")
+  pop_layer(model)
+  predictions <- model$output %>% layer_dense(units = 1, activation = "linear")
+  summary(model)
+  model_2 <- keras_model(inputs = model$input, outputs = predictions)
+  layers <- model_2$layers
+  for (i in 1:length(layers)){
+    cat(i, layers[[i]]$name, "\n")}
+  for (i in 1){
+    layers[[i]]$trainable <- F}
+  for (i in 2:length(layers)){
+    layers[[i]]$trainable <-T}
+  summary(model_2)
+  model_2 %>% compile(
+    optimizer = "adam", 
+    loss="mae")
+}
+batch = 8
+val_split=0.05
+num_epochs = 35
+########## CROSS-VALIDATION#############
+for(f in 1:10){
+  ind <- kfold[[f]]
+  x_train <- matrix[-ind,,]
+  y_train <- retention_time[-ind,]
+  x_test <- matrix[ind,,]
+  y_test <- retention_time[ind,]
+  model_hilic<- build_model() 
+  early_stop <- callback_early_stopping(monitor = "val_loss",
+                                        patience =10,
+                                        mode = "min",
+                                        min_delta= 0.01,
+                                        restore_best_weights =F)
+  model_hilic %>% fit(
+    x = x_train, y = y_train,
+    batch_size = batch,
+    epochs = num_epochs,
+    validation_split = val_split,
+    callbacks = list(early_stop))
+  
+  test_y_pred <- model_hilic %>% predict(x_test)
+  predicted<- c(predicted, test_y_pred)
+  RMSE<- RMSE(y_test, test_y_pred)
+  MAE <- MAE(y_test, test_y_pred)
+  MedAE<- mdae(y_test, test_y_pred)
+  MedRE<- mdape(y_test, test_y_pred)
+  MRE <- mape(y_test, test_y_pred)
+  
+  RMSE_all <- c(RMSE_all, RMSE)
+  MAE_all <- c(MAE_all, MAE)
+  MedAE_all <- c(MedAE_all, MedAE)
+  MRE_all <- c(MRE_all, MRE)
+  MedRE_all<- c(MedRE_all, MedRE)
+  
+} 
+#########RESULTS ####################
+#### METRICS FOR EACH FOLD
+test_metrics<- as.data.frame(cbind(RMSE_all,MAE_all,MedAE_all, MRE_all, MedRE_all ))
+#### MEAN VALUE  across folds
+mean <- as.data.frame(t(apply(test_metrics,2, function(x) (mean(x)))),row.names = "Mean")
+#### STANDARD DEVIATION
+standard_dev <- as.data.frame(t(apply(test_metrics,2,function(z) sd(z))))
+
+test_metrics_mean <- rbind(test_metrics,mean, standard_dev)
+test_metrics_mean<- round(test_metrics_mean,2)
+all_retention<- retention_time[unlist(kfold),]
+###PLOT Predicted VS Experimental Retention times
+plot(all_retention, predicted)
+####SAVE THE RESULTS
+fwrite(test_metrics_mean, 'test_metrics_mean.csv')
+results_prediction = data.table(cbind(all_retention, predicted))
+colnames(results_prediction) = c('Experimental_RT', 'Predicted_RT')
+fwrite(results_prediction, 'results_of_prediction.csv')
+
+
+
