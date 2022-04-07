@@ -1,7 +1,7 @@
 options(java.parameters = c("-XX:+UseConcMarkSweepGC", "-Xmx1200m")) ##EXTEND MEMORY
 memory.size(max = T)                                                 ##EXTEND MEMORY
 memory.limit(size=56000)                                             ##EXTEND MEMORY
-setwd("C:/Users")                                                    #SET YOR DIRECTORY
+setwd("C:/Users")                                                    #SET YOUR DIRECTORY
 #LOAD LIBRARIES
 library(keras)
 library(text2vec)
@@ -124,7 +124,7 @@ model%>% fit(
   xtrain,
   ytrain,
   batch_size =32,
-  epochs = 10,
+  epochs = 15,
   callbacks = list(early_stop),
   validation_split = 0.1)
 model %>% fit(xtrain, 
