@@ -1,7 +1,7 @@
-options(java.parameters = c("-XX:+UseConcMarkSweepGC", "-Xmx1200m"))
-memory.size(max = T)
-memory.limit(size=56000)
-
+options(java.parameters = c("-XX:+UseConcMarkSweepGC", "-Xmx1200m")) ##EXTEND MEMORY
+memory.size(max = T)                                                 ##EXTEND MEMORY
+memory.limit(size=56000)                                             ##EXTEND MEMORY
+setwd("C:/Users")                                                    #SET YOR DIRECTORY
 #LOAD LIBRARIES
 library(keras)
 library(text2vec)
