@@ -24,7 +24,7 @@ The only requirements are to be familiar with the basic syntax of the *R* langua
 ## Citation :link:
 *SMRT_transfer* has been published in the [Journal of Chromatography A](https://www.sciencedirect.com/journal/journal-of-chromatography-a). If you use this software to analyze your own data, please cite it as below, thanks:
 
-> [Elizaveta S. Fedorova, Dmitriy D. Matyushin, Ivan V. Plyushchenko, Andrey N. Stavrianidi, Aleksey K. Buryak. Deep learning for retention time prediction in reversed-phase liquid chromatography, Journal of Chromatography A, 2021.](https://www.sciencedirect.com/science/article/abs/pii/S0021967321009146?via%3Dihub)
+> [Elizaveta S. Fedorova, Dmitriy D. Matyushin, Ivan V. Plyushchenko, Andrey N. Stavrianidi, Aleksey K. Buryak. Deep learning for retention time prediction in reversed-phase liquid chromatography, Journal of Chromatography A, 2022, 1664, 462792.](https://www.sciencedirect.com/science/article/abs/pii/S0021967321009146?via%3Dihub)
 
 ## Contact :mailbox:
 Please send any comments or questions you may have to the author (*Ms. Elizaveta Fedorova* :woman_scientist:): :envelope: elizaveta.chemi@gmail.com, <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"> [0000-0002-5774-7901](https://orcid.org/0000-0002-5774-7901).
